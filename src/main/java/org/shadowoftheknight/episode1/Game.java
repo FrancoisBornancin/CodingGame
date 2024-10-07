@@ -1,123 +1,56 @@
 package org.shadowoftheknight.episode1;
 
 public class Game {
-    public static String DOWN = "D";
-    public static String UP = "U";
-    public static String LEFT = "L";
-    public static String RIGHT = "R";
-    public int actualX;
-    public int actualY;
-    public int beforeOneX;
-    public int beforeOneY;
-    public int maxWidth;
-    public int maxHeight;
 
-    public int minWidth;
-    public int minHeight;
-    public String actualBombdir;
-    public String beforeBombdir;
-    public int bombX;
-    public int bombY;
-
-    public String play(Player player, Bomb bomb){
-        initValues(player);
+    public String play(Player player, Bomb bomb, Batman batman, Building building){
+        initValues(player, bomb, batman, building);
 
         int countTurn = 0;
 
+        System.err.println("");
+
         // game loop
-        while (this.possiblyContinueLoop(bomb, player.useCodeGymValues)) {
+        while (this.possiblyContinueLoop(bomb, batman, player.useCodeGymValues)) {
             countTurn ++;
             if(countTurn > player.N){
                 return "YOU LOST";
             }else {
-                if(this.actualBombdir == null) this.beforeBombdir = "";
-                else this.beforeBombdir = this.actualBombdir;
+                bomb.updateBeforeDirection();
+                bomb.updateActualDirection(player, batman);
 
-                String bombDir = bomb.updateDirection(player.scanner, player.useCodeGymValues, this);
-                this.actualBombdir = bombDir;
-
-                if(this.actualBombdir.contains(DOWN)){
-                    if(this.beforeBombdir.contains(UP)){
-                        this.maxHeight = this.beforeOneY;
-                        this.minHeight = this.actualY;
-                    }
-                    if(this.actualY == this.beforeOneY) {
-                        this.updateValuesDuringEachTurn();
-                        this.actualY = this.actualY + 1;
-                    }
-                    else {
-                        this.updateValuesDuringEachTurn();
-                        this.actualY = (int) Math.floor(this.actualY + (this.maxHeight - this.actualY)/2);
-                    }
-                }
-
-                if(this.actualBombdir.contains(UP)){
-                    if(this.beforeBombdir.contains(DOWN)) {
-                        this.maxHeight = this.actualY;
-                        this.minHeight = this.beforeOneY;
-                    }
-                    this.updateValuesDuringEachTurn();
-                    this.actualY = (int) Math.floor(this.actualY - (this.actualY - this.minHeight)/2);
-                }
-
-                if(this.actualBombdir.contains(LEFT)){
-                    if(this.beforeBombdir.contains(RIGHT)){
-                        this.minWidth = this.beforeOneX;
-                        this.maxWidth = this.actualX;
-                    }
-                    this.updateValuesDuringEachTurn();
-                    this.actualX = (int) Math.floor(this.actualY - (this.actualX - this.minWidth)/2);
-                }
-
-                if(this.actualBombdir.contains(RIGHT)){
-                    if(this.beforeBombdir.contains(LEFT)){
-                        this.maxWidth = this.beforeOneX;
-                        this.minWidth = this.actualX;
-                    }
-                    this.updateValuesDuringEachTurn();
-                    this.actualX = (int) Math.floor(this.actualX + (this.maxWidth - this.actualX)/2);
-                }
+                batman.updateCoordinates(bomb);
 
                 System.err.println("");
 
-                System.err.println("bombDir: " + this.actualBombdir);
-                System.err.println("bombDirX: " + this.bombX + " bombDirY: " + this.bombY);
-                System.err.println("player.actualX: " + this.actualX + " player.actualY: " + this.actualY);
-                System.out.println(("" + this.actualX) + " " + ("" + this.actualY));
+                System.err.println("bombDir: " + bomb.actualDir);
+                System.err.println("bombDirX: " + bomb.coordinateX + " bombDirY: " + bomb.coordinateY);
+                System.err.println("player.actualX: " + batman.actualX + " player.actualY: " + batman.actualY);
+                System.out.println(("" + batman.actualX) + " " + ("" + batman.actualY));
 
-                updateValuesAfterEachTurn();
+                bomb.updateBeforeDirectionAfterEachTurn();
             }
         }
         return "YOU WIN";
     }
 
-    private void updateValuesAfterEachTurn(){
-        this.beforeBombdir = this.actualBombdir;
-    }
+    private void initValues(Player player, Bomb bomb, Batman batman, Building building){
+        batman.minY = 0;
+        batman.minX = 0;
 
-    private void updateValuesDuringEachTurn(){
-        this.beforeOneY = this.actualY;
-        this.beforeOneX = this.actualX;
-    }
+        batman.maxY = building.height;
+        batman.maxX = building.width;
 
-    private void initValues(Player player){
-        this.minHeight = 0;
-        this.minWidth = 0;
-
-        this.maxHeight = player.buildingHeight;
-        this.maxWidth = player.buildingWidth;
-
-        this.actualX = player.initialX;
-        this.actualY = player.initialY;
+        batman.actualX = batman.initialX;
+        batman.actualY = batman.initialY;
 
         if(player.useCodeGymValues){
-            this.bombX = 0;
-            this.bombY = 0;
+            bomb.coordinateX = 0;
+            bomb.coordinateY = 0;
         }
     }
 
-    private boolean possiblyContinueLoop(Bomb bomb, boolean useCodeGymValue){
+    private boolean possiblyContinueLoop(Bomb bomb, Batman batman, boolean useCodeGymValue){
         if(useCodeGymValue) return useCodeGymValue;
-        else return !((this.actualX == bomb.coordinateX) && (this.actualY == bomb.coordinateY));
+        else return !((batman.actualX == bomb.coordinateX) && (batman.actualY == bomb.coordinateY));
     }
 }
