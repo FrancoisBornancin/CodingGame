@@ -62,7 +62,6 @@ public class FileMerger {
                     throw new RuntimeException(e);
                 }
             });
-
             System.out.println("All files merged into " + outputFile);
         } catch (IOException e) {
             e.printStackTrace();
