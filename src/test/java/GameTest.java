@@ -1,3 +1,4 @@
+import org.shadowoftheknight.episode1.Bomb;
 import org.shadowoftheknight.episode1.Game;
 import org.shadowoftheknight.episode1.Player;
 import org.junit.jupiter.api.Assertions;
@@ -19,12 +20,11 @@ public class GameTest {
         int initialX = 2;
         int initialY = 3;
 
-        game.bombX = 3;
-        game.bombY = 7;
+        Bomb bomb = new Bomb(3, 7);
 
         Player player = new Player(useCodeGymValues, buildingWidth, buildingHeight, N, initialX, initialY, in);
 
-        Assertions.assertEquals("YOU WIN", game.play(player));
+        Assertions.assertEquals("YOU WIN", game.play(player, bomb));
     }
 
     @Test
@@ -39,12 +39,11 @@ public class GameTest {
         int initialX = 2;
         int initialY = 29;
 
-        game.bombX = 24;
-        game.bombY = 2;
+        Bomb bomb = new Bomb(24, 2);
 
         Player player = new Player(useCodeGymValues, buildingWidth, buildingHeight, N, initialX, initialY, in);
 
-        Assertions.assertEquals("YOU WIN", game.play(player));
+        Assertions.assertEquals("YOU WIN", game.play(player, bomb));
     }
 
     @Test
@@ -59,12 +58,11 @@ public class GameTest {
         int initialX = 6;
         int initialY = 6;
 
-        game.bombX = 38;
-        game.bombY = 38;
+        Bomb bomb = new Bomb(38, 38);
 
         Player player = new Player(useCodeGymValues, buildingWidth, buildingHeight, N, initialX, initialY, in);
 
-        Assertions.assertEquals("YOU WIN", game.play(player));
+        Assertions.assertEquals("YOU WIN", game.play(player, bomb));
     }
 
     @Test
@@ -79,12 +77,11 @@ public class GameTest {
         int initialX = 0;
         int initialY = 1;
 
-        game.bombX = 0;
-        game.bombY = 36;
+        Bomb bomb = new Bomb(0, 36);
 
         Player player = new Player(useCodeGymValues, buildingWidth, buildingHeight, N, initialX, initialY, in);
 
-        Assertions.assertEquals("YOU WIN", game.play(player));
+        Assertions.assertEquals("YOU WIN", game.play(player, bomb));
     }
 
     @Test
@@ -99,11 +96,10 @@ public class GameTest {
         int initialX = 0;
         int initialY = 0;
 
-        game.bombX = 22;
-        game.bombY = 22;
+        Bomb bomb = new Bomb(22, 22);
 
         Player player = new Player(useCodeGymValues, buildingWidth, buildingHeight, N, initialX, initialY, in);
 
-        Assertions.assertEquals("YOU WIN", game.play(player));
+        Assertions.assertEquals("YOU WIN", game.play(player, bomb));
     }
 }

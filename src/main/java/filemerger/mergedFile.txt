@@ -2,6 +2,35 @@ import java.util.Scanner;
 import java.util.*;
 
 
+class Bomb {
+    public String dir;
+    public int coordinateX;
+    public int coordinateY;
+
+    public Bomb(){};
+
+    public Bomb(int coordinateX, int coordinateY){
+        this.coordinateX = coordinateX;
+        this.coordinateY = coordinateY;
+    }
+
+    public String updateDirection(Scanner input, boolean useCodeGymValue, Game game){
+        if(useCodeGymValue) return input.next();
+        else {
+            String bombDir = "";
+            if(this.coordinateY > game.actualY) bombDir += "D";
+            if(this.coordinateY == game.actualY) bombDir += "";
+            if(this.coordinateY < game.actualY) bombDir += "U";
+
+            if(this.coordinateX > game.actualX) bombDir += "R";
+            if(this.coordinateX == game.actualX) bombDir += "";
+            if(this.coordinateX < game.actualX) bombDir += "L";
+
+            return bombDir;
+        }
+    }
+}
+
 class Game {
     public static String DOWN = "D";
     public static String UP = "U";
@@ -21,13 +50,13 @@ class Game {
     public int bombX;
     public int bombY;
 
-    public String play(Player player){
+    public String play(Player player, Bomb bomb){
         initValues(player);
 
         int countTurn = 0;
 
         // game loop
-        while (this.possiblyContinueLoop(this.bombX, this.bombY, player.useCodeGymValues)) {
+        while (this.possiblyContinueLoop(bomb, player.useCodeGymValues)) {
             countTurn ++;
             if(countTurn > player.N){
                 return "YOU LOST";
@@ -35,7 +64,7 @@ class Game {
                 if(this.actualBombdir == null) this.beforeBombdir = "";
                 else this.beforeBombdir = this.actualBombdir;
 
-                String bombDir = this.updateBombDir(player.scanner, player.useCodeGymValues);
+                String bombDir = bomb.updateDirection(player.scanner, player.useCodeGymValues, this);
                 this.actualBombdir = bombDir;
 
                 System.err.println("");
@@ -120,25 +149,9 @@ class Game {
         }
     }
 
-    private boolean possiblyContinueLoop(int bombX, int bombY, boolean useCodeGymValue){
+    private boolean possiblyContinueLoop(Bomb bomb, boolean useCodeGymValue){
         if(useCodeGymValue) return useCodeGymValue;
-        else return !((this.actualX == bombX) && (this.actualY == bombY));
-    }
-
-    private String updateBombDir(Scanner input, boolean useCodeGymValue){
-        if(useCodeGymValue) return input.next();
-        else {
-            String bombDir = "";
-            if(bombY > actualY) bombDir += "D";
-            if(bombY == actualY) bombDir += "";
-            if(bombY < actualY) bombDir += "U";
-
-            if(bombX > actualX) bombDir += "R";
-            if(bombX == actualX) bombDir += "";
-            if(bombX < actualX) bombDir += "L";
-
-            return bombDir;
-        }
+        else return !((this.actualX == bomb.coordinateX) && (this.actualY == bomb.coordinateY));
     }
 }
 
@@ -186,6 +199,6 @@ class Player {
 
         Player player = new Player(true, in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in);
 
-        game.play(player);
+        game.play(player, new Bomb());
     }
 }

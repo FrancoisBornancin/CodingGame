@@ -1,7 +1,5 @@
 package org.shadowoftheknight.episode1;
 
-import java.util.Scanner;
-
 public class Game {
     public static String DOWN = "D";
     public static String UP = "U";
@@ -21,13 +19,13 @@ public class Game {
     public int bombX;
     public int bombY;
 
-    public String play(Player player){
+    public String play(Player player, Bomb bomb){
         initValues(player);
 
         int countTurn = 0;
 
         // game loop
-        while (this.possiblyContinueLoop(this.bombX, this.bombY, player.useCodeGymValues)) {
+        while (this.possiblyContinueLoop(bomb, player.useCodeGymValues)) {
             countTurn ++;
             if(countTurn > player.N){
                 return "YOU LOST";
@@ -35,10 +33,8 @@ public class Game {
                 if(this.actualBombdir == null) this.beforeBombdir = "";
                 else this.beforeBombdir = this.actualBombdir;
 
-                String bombDir = this.updateBombDir(player.scanner, player.useCodeGymValues);
+                String bombDir = bomb.updateDirection(player.scanner, player.useCodeGymValues, this);
                 this.actualBombdir = bombDir;
-
-                System.err.println("");
 
                 if(this.actualBombdir.contains(DOWN)){
                     if(this.beforeBombdir.contains(UP)){
@@ -120,24 +116,8 @@ public class Game {
         }
     }
 
-    private boolean possiblyContinueLoop(int bombX, int bombY, boolean useCodeGymValue){
+    private boolean possiblyContinueLoop(Bomb bomb, boolean useCodeGymValue){
         if(useCodeGymValue) return useCodeGymValue;
-        else return !((this.actualX == bombX) && (this.actualY == bombY));
-    }
-
-    private String updateBombDir(Scanner input, boolean useCodeGymValue){
-        if(useCodeGymValue) return input.next();
-        else {
-            String bombDir = "";
-            if(bombY > actualY) bombDir += "D";
-            if(bombY == actualY) bombDir += "";
-            if(bombY < actualY) bombDir += "U";
-
-            if(bombX > actualX) bombDir += "R";
-            if(bombX == actualX) bombDir += "";
-            if(bombX < actualX) bombDir += "L";
-
-            return bombDir;
-        }
+        else return !((this.actualX == bomb.coordinateX) && (this.actualY == bomb.coordinateY));
     }
 }

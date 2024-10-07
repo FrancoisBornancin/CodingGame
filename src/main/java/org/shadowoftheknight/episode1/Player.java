@@ -45,6 +45,6 @@ public class Player {
 
         Player player = new Player(true, in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in);
 
-        game.play(player);
+        game.play(player, new Bomb());
     }
 }
