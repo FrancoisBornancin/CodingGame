@@ -37,6 +37,9 @@ public class Player {
             player.elements.add(in.nextLine());
         }
 
+
+        System.err.println("player.elements: " + player.elements);
+
         game.play(player).forEach(System.out::println);
     }
 }

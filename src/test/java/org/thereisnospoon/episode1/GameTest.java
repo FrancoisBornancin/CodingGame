@@ -29,4 +29,27 @@ public class GameTest {
                 game.play(player)
         );
     }
+
+    @Test
+    void horizontal(){
+        Player player = new Player();
+
+        player.elements =
+                List.of(
+                        "0.0.0"
+                );
+        player.width = 5;
+        player.height = 1;
+
+        Game game = new Game();
+
+        Assertions.assertEquals(
+                List.of(
+                        "0 0 2 0 -1 -1",
+                        "2 0 4 0 -1 -1",
+                        "4 0 -1 -1 -1 -1"
+                ),
+                game.play(player)
+        );
+    }
 }
