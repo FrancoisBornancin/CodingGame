@@ -1,7 +1,6 @@
-import org.example.Game;
-import org.example.Player;
+import org.shadowoftheknight.episode1.Game;
+import org.shadowoftheknight.episode1.Player;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Scanner;
@@ -82,6 +81,26 @@ public class GameTest {
 
         game.bombX = 0;
         game.bombY = 36;
+
+        Player player = new Player(useCodeGymValues, buildingWidth, buildingHeight, N, initialX, initialY, in);
+
+        Assertions.assertEquals("YOU WIN", game.play(player));
+    }
+
+    @Test
+    void goodCut(){
+        Game game = new Game();
+        Scanner in = new Scanner(System.in);
+
+        boolean useCodeGymValues = false;
+        int buildingWidth = 50;
+        int buildingHeight = 50;
+        int N = 6;
+        int initialX = 0;
+        int initialY = 0;
+
+        game.bombX = 22;
+        game.bombY = 22;
 
         Player player = new Player(useCodeGymValues, buildingWidth, buildingHeight, N, initialX, initialY, in);
 

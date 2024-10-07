@@ -1,4 +1,4 @@
-package org.example;
+package org.shadowoftheknight.episode1;
 
 import java.util.Scanner;
 
@@ -70,7 +70,7 @@ public class Game {
                         this.maxWidth = this.actualX;
                     }
                     this.updateValuesDuringEachTurn();
-                    this.actualX = (int) Math.floor((this.actualX - this.minWidth)/2);
+                    this.actualX = (int) Math.floor(this.actualY - (this.actualX - this.minWidth)/2);
                 }
 
                 if(this.actualBombdir.contains(RIGHT)){

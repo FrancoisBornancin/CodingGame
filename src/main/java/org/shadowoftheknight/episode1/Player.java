@@ -1,4 +1,4 @@
-package org.example;
+package org.shadowoftheknight.episode1;
 
 import java.util.*;
 
