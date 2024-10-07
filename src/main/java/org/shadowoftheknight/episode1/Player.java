@@ -1,6 +1,6 @@
 package org.shadowoftheknight.episode1;
 
-import java.util.*;
+import java.util.Scanner;
 
 /**
  * Auto-generated code below aims at helping you parse
