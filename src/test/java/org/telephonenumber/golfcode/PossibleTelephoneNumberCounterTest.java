@@ -3,6 +3,7 @@ package org.telephonenumber.golfcode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PossibleTelephoneNumberCounterTest {
@@ -11,8 +12,10 @@ public class PossibleTelephoneNumberCounterTest {
         PossibleTelephoneNumberCounter possibleTelephoneNumberCounter = new PossibleTelephoneNumberCounter();
         NodeListInitializer nodeListInitializer = new NodeListInitializer();
         List<String> telephoneNumberList =
-                List.of(
-                        "0123456789"
+                new ArrayList<>(
+                        List.of(
+                                "0123456789"
+                        )
                 );
 
         List<Node> nodeList = nodeListInitializer.initList(telephoneNumberList);
@@ -31,9 +34,11 @@ public class PossibleTelephoneNumberCounterTest {
         PossibleTelephoneNumberCounter possibleTelephoneNumberCounter = new PossibleTelephoneNumberCounter();
         NodeListInitializer nodeListInitializer = new NodeListInitializer();
         List<String> telephoneNumberList =
-                List.of(
-                        "0123456789",
-                        "1123456789"
+                new ArrayList<>(
+                        List.of(
+                                "0123456789",
+                                "1123456789"
+                        )
                 );
 
         possibleTelephoneNumberCounter
@@ -52,9 +57,11 @@ public class PossibleTelephoneNumberCounterTest {
         PossibleTelephoneNumberCounter possibleTelephoneNumberCounter = new PossibleTelephoneNumberCounter();
         NodeListInitializer nodeListInitializer = new NodeListInitializer();
         List<String> telephoneNumberList =
-                List.of(
-                        "0123456789",
-                        "0123"
+                new ArrayList<>(
+                        List.of(
+                                "0123456789",
+                                "0123"
+                        )
                 );
 
         possibleTelephoneNumberCounter
@@ -73,12 +80,14 @@ public class PossibleTelephoneNumberCounterTest {
         PossibleTelephoneNumberCounter possibleTelephoneNumberCounter = new PossibleTelephoneNumberCounter();
         NodeListInitializer nodeListInitializer = new NodeListInitializer();
         List<String> telephoneNumberList =
-                List.of(
-                        "0412578440",
-                        "0412199803",
-                        "0468892011",
-                        "112",
-                        "15"
+                new ArrayList<>(
+                        List.of(
+                                "0412578440",
+                                "0412199803",
+                                "0468892011",
+                                "112",
+                                "15"
+                        )
                 );
 
         possibleTelephoneNumberCounter

@@ -3,6 +3,7 @@ package org.telephonenumber.golfcode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NodeListInitializerTest {
@@ -10,9 +11,11 @@ public class NodeListInitializerTest {
     void itShouldConstructAListWithDistinctElementsAtChat0(){
         NodeListInitializer nodeListInitializer = new NodeListInitializer();
         List<String> telephoneNumberList =
-                List.of(
-                        "0123456789",
-                        "4123456789"
+                new ArrayList<>(
+                        List.of(
+                                "0123456789",
+                                "4123456789"
+                        )
                 );
 
         List<Node> initializedList =
@@ -39,9 +42,11 @@ public class NodeListInitializerTest {
     void itShouldFillDistinctElementOfANodeAtChar0_case1(){
         NodeListInitializer nodeListInitializer = new NodeListInitializer();
         List<String> telephoneNumberList =
-                List.of(
-                        "0223456789",
-                        "0123456789"
+                new ArrayList<>(
+                        List.of(
+                                "0223456789",
+                                "0123456789"
+                        )
                 );
 
         List<Node> initializedList =
@@ -62,10 +67,12 @@ public class NodeListInitializerTest {
     void itShouldFillDistinctElementOfANodeAtChar0_case2(){
         NodeListInitializer nodeListInitializer = new NodeListInitializer();
         List<String> telephoneNumberList =
-                List.of(
-                        "0223456789",
-                        "0123456789",
-                        "0148256789"
+                new ArrayList<>(
+                        List.of(
+                                "0223456789",
+                                "0123456789",
+                                "0148256789"
+                        )
                 );
 
         List<Node> initializedList =
@@ -80,24 +87,5 @@ public class NodeListInitializerTest {
                 2,
                 initializedList.get(0).distinctElements.size()
         );
-    }
-
-    @Test
-    void itShouldFillDistinctElementOfANodeAtChar0_case3(){
-        NodeListInitializer nodeListInitializer = new NodeListInitializer();
-        List<String> telephoneNumberList =
-                List.of(
-                        "0412578440"
-//                        ,
-//                        "0412199803",
-//                        "0468892011",
-//                        "112",
-//                        "15"
-                );
-
-        List<Node> initializedList =
-                nodeListInitializer.initList(telephoneNumberList);
-
-        System.out.println("");
     }
 }

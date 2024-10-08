@@ -3,6 +3,7 @@ package org.telephonenumber.golfcode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GameTest {
@@ -11,9 +12,11 @@ public class GameTest {
         Game game = new Game();
         Solution solution = new Solution();
         solution.telephonNumberList =
-                List.of(
-                        "0467123456"
-                        );
+                new ArrayList<>(
+                    List.of(
+                            "0467123456"
+                    )
+                );
 
         Assertions.assertEquals(
                 "10",
@@ -26,9 +29,11 @@ public class GameTest {
         Game game = new Game();
         Solution solution = new Solution();
         solution.telephonNumberList =
-                List.of(
-                        "0123456789",
-                        "1123456789"
+                new ArrayList<>(
+                        List.of(
+                                "0123456789",
+                                "1123456789"
+                        )
                 );
 
         Assertions.assertEquals(
