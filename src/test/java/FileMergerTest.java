@@ -6,7 +6,7 @@ public class FileMergerTest {
     void doStuff(){
         FileMerger fileMerger = new FileMerger();
 
-        String inputDir = "src/main/java/org/thereisnospoon/episode1";
+        String inputDir = "src/main/java/org/telephonenumber/golfcode";
         String outputFile = "src/main/java/filemerger/mergedFile.txt";
 
         fileMerger.mergeFiles(inputDir, outputFile);

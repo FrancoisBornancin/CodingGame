@@ -1,110 +1,114 @@
 import java.util.List;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-
-class ColumnScanner {
-    public String getUnderNodeAsString(List<String> elementsToScan, int widthIndex, int heightIndex){
-
-        for(int a = (heightIndex + 1) ; a < elementsToScan.size() ; a++){
-            try{
-                if(elementsToScan.get(a).charAt(widthIndex) == '0') return "" + widthIndex + " " + a;
-            }catch (Exception e){
-                return "-1 -1";
-            }
-        }
-
-        return "-1 -1";
-    }
-}
-
-
 class Game {
 
-    public List<String> play(Player player){
-        List<String> elementsToPrint = new ArrayList<>();
-        LineScanner lineScanner = new LineScanner();
-        ColumnScanner columnScanner = new ColumnScanner();
+    public String play(Solution solution){
+        PossibleTelephoneNumberCounter possibleTelephoneNumberCounter = new PossibleTelephoneNumberCounter();
+        NodeListInitializer nodeListInitializer = new NodeListInitializer();
 
-        for(int height = 0 ; height < player.height ; height++){
-            for(int width = 0 ; width < player.width ; width++){
-                if(isNode(height, width, player)){
-                    String elementToPrint = (width + " " + height);
-                    elementToPrint += " ";
+        return String.valueOf(
+                possibleTelephoneNumberCounter
+                        .countDistinctTelephoneNumbers(
+                                nodeListInitializer.initList(
+                                        solution.telephonNumberList
+                                )
+                        )
+        );
+    }
+}
 
-                    elementToPrint += lineScanner.getRightNodeAsString(player.elements.get(height), width, height);
 
-                    elementToPrint += " ";
+class Node {
+    int indexForCommonElement;
+    String commonElement;
+    List<Node> distinctElements;
+}
 
-                    elementToPrint += columnScanner.getUnderNodeAsString(player.elements, width, height);
 
-                    elementsToPrint.add(elementToPrint);
-                }
+class NodeListInitializer {
+    public List<Node> initList(List<String> telephoneNumberList){
+
+        List<Node> nodeList =
+            fillCommonElementNodeList(telephoneNumberList, 0);
+
+        fillSucessively(nodeList, telephoneNumberList);
+        return nodeList;
+    }
+
+    private void fillSucessively(List<Node> nodeList, List<String> telephoneNumberList){
+        nodeList.forEach(node -> {
+            node.distinctElements = new ArrayList<>();
+            try{
+                List<String> truncatedTelephoneList =
+                        telephoneNumberList.stream()
+                                .filter(truncatedTelephoneNumber -> truncatedTelephoneNumber.startsWith(node.commonElement))
+                                .map(telephoneNumber -> telephoneNumber.substring(node.indexForCommonElement + 1))
+                                .filter(telephoneNumber -> !telephoneNumber.equals(""))
+                                .collect(Collectors.toList());
+
+                node.distinctElements
+                        = fillCommonElementNodeList(truncatedTelephoneList, node.indexForCommonElement);
+
+                node.distinctElements.forEach(
+                        distinctNode -> fillSucessively(node.distinctElements, truncatedTelephoneList)
+                );
+            }catch (StringIndexOutOfBoundsException e){
+                node.distinctElements = List.of();
             }
-        }
 
-        return elementsToPrint;
+        });
     }
 
-    private boolean isNode(int height, int width, Player player){
-        return player.elements.get(height).charAt(width) == '0';
-    }
-}
-
-class LineScanner {
-
-    public String getRightNodeAsString(String element, int index, int heightIndex){
-        String[] elementsToScan = element.substring(index).split("");
-
-        for(int a = 1 ; a < elementsToScan.length ; a++){
-            if(elementsToScan[a].equals("0")) return "" + (index + a) + " " + heightIndex;
-        }
-
-        return "-1 -1";
-
+    private List<Node> fillCommonElementNodeList(List<String> telephoneNumberList, int charToStartIndex){
+        return telephoneNumberList.stream()
+                .map(element -> element.charAt(0))
+                .distinct()
+                .map(element -> {
+                    Node node = new Node();
+                    node.commonElement = element.toString();
+                    node.indexForCommonElement = charToStartIndex;
+                    return node;
+                })
+                .toList();
     }
 }
 
 
-/**
- * Auto-generated code below aims at helping you parse
- * the standard input according to the problem statement.
- **/
-class Player {
-    List<String> elements;
-    int width;
-    int height;
+class PossibleTelephoneNumberCounter {
+    int count;
+    public int countDistinctTelephoneNumbers(List<Node> nodeList){
+        this.count += nodeList.size();
 
-    public Player(){}
+        nodeList.forEach(node -> countDistinctTelephoneNumbers(node.distinctElements));
+
+        return count;
+    }
+}
+
+
+class Solution {
+    List<String> telephonNumberList;
 
     public static void main(String args[]) {
-        Game game = new Game();
+        Solution solution = new Solution();
+        solution.telephonNumberList = new ArrayList<>();
+
         Scanner in = new Scanner(System.in);
-
-        int width = in.nextInt(); // the number of cells on the X axis
-        int height = in.nextInt(); // the number of cells on the Y axis
-        System.err.println("width: " + width);
-        System.err.println("height: " + height);
-
-        if (in.hasNextLine()) {
-            in.nextLine();
+        int N = in.nextInt();
+        System.err.println("N: " + N);
+        for (int i = 0; i < N; i++) {
+            String telephone = in.next();
+            solution.telephonNumberList.add(telephone);
         }
 
-        Player player = new Player();
-        player.width = width;
-        player.height = height;
-        player.elements = new ArrayList<>();
-
-        for (int i = 0; i < height; i++) {
-            player.elements.add(in.nextLine());
-        }
-
-
-        System.err.println("player.elements: " + player.elements);
-
-        game.play(player).forEach(System.out::println);
+        Game game = new Game();
+        System.out.println(game.play(solution));
     }
 }
