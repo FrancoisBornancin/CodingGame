@@ -1,6 +1,5 @@
 package org.telephonenumber.golfcode;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,13 +9,10 @@ public class NodeListInitializer {
         List<Node> nodeList =
             fillCommonElementNodeList(telephoneNumberList);
 
-        fillSucessively(nodeList, telephoneNumberList);
         return nodeList;
     }
 
-    private void fillSucessively(List<Node> nodeList, List<String> telephoneNumberList){
-        nodeList.forEach(node -> {
-            node.distinctElements = new ArrayList<>();
+    private void fillWithTruncatedTelephoneList(Node node, List<String> telephoneNumberList){
             try{
                 List<String> truncatedTelephoneList =
                         telephoneNumberList.stream()
@@ -27,15 +23,9 @@ public class NodeListInitializer {
 
                 node.distinctElements
                         = fillCommonElementNodeList(truncatedTelephoneList);
-
-                node.distinctElements.forEach(
-                        distinctNode -> fillSucessively(node.distinctElements, truncatedTelephoneList)
-                );
             }catch (StringIndexOutOfBoundsException e){
                 node.distinctElements = List.of();
             }
-
-        });
     }
 
     private List<Node> fillCommonElementNodeList(List<String> telephoneNumberList){
@@ -45,6 +35,9 @@ public class NodeListInitializer {
                 .map(element -> {
                     Node node = new Node();
                     node.commonElement = element.toString();
+
+                    fillWithTruncatedTelephoneList(node, telephoneNumberList);
+
                     return node;
                 })
                 .toList();
