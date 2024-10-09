@@ -1,9 +1,14 @@
 import java.util.List;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Set;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,108 +17,111 @@ import java.util.Scanner;
 
 class FirstNodesRetriever {
     public List<Node> retrieveFirstNodes(List<Node> nodeList){
-        return null;
+        return nodeList.stream()
+                .filter(node -> node.influencorsList.isEmpty())
+                .toList();
     }
 }
 
 
 class Game {
     public int play(List<Node> relationShipList){
+        NodeSetContainer nodeSetContainer = new NodeSetContainer();
+        FirstNodesRetriever firstNodesRetriever = new FirstNodesRetriever();
+        NodeChainCounter nodeChainCounter = new NodeChainCounter();
 
+        relationShipList.forEach(nodeSetContainer::fillNodeList);
 
+        List<Node> firstNodesList =
+            firstNodesRetriever.retrieveFirstNodes(nodeSetContainer.noDuplicatesNodes);
 
-        return 0;
+        Set<Integer> allNodesElements =
+                nodeChainCounter.getAllPossibleCount(firstNodesList);
+
+        return Collections.max(allNodesElements);
+
     }
 }
 
 
 class Node {
+    Set<Integer> currentAndPreviousNodes;
     List<Node> influencorsList;
     List<Node> influenceesList;
     int currentValue;
+    int influenceeValue;
+    boolean hasInfluenceeNotCounted;
+
+    public Node(int currentValue, int influenceeValue){
+        this.currentValue = currentValue;
+        this.influenceeValue = influenceeValue;
+    }
 
     public Node(int currentValue){
         this.currentValue = currentValue;
     }
+}
 
-    public Node(int currentValue, Node influencee){
-        this.currentValue = currentValue;
-        if(influenceesList == null) influenceesList = new ArrayList<>();
-        influenceesList.add(influencee);
-        influencee.addInfluencor(this);
+
+class NodeChainCounter {
+    Set<Integer> allNodesElements;
+    public Set<Integer> getAllPossibleCount(List<Node> nodeList){
+        allNodesElements = new HashSet<>();
+
+        nodeList.forEach(node -> {
+            initCurrentAndPrevious(node);
+            node.currentAndPreviousNodes.add(1);
+            fillCurrentAndPreviousNodes(node);
+        });
+
+        return allNodesElements;
     }
 
-    public Node(Node influencor, int currentValue){
-        this.currentValue = currentValue;
-        if(influencorsList == null) influencorsList = new ArrayList<>();
-        influencorsList.add(influencor);
-        influencor.addInfluencee(this);
+    private void initCurrentAndPrevious(Node node){
+        if(node.currentAndPreviousNodes == null) node.currentAndPreviousNodes = new HashSet<>();
     }
 
-    public void addInfluencee(Node influencee){
-        if(this.influenceesList == null) influenceesList = new ArrayList<>();
-        influenceesList.add(influencee);
+    private void fillCurrentAndPreviousNodes(Node node){
+        initCurrentAndPrevious(node);
+        if(!node.influenceesList.isEmpty()){
+            node.influenceesList.forEach(influenceeNode -> {
+                initCurrentAndPrevious(influenceeNode);
+                node.currentAndPreviousNodes.forEach(nodeInt -> influenceeNode.currentAndPreviousNodes.add(nodeInt + 1));
+                fillCurrentAndPreviousNodes(influenceeNode);
+            });
+        }else{
+            allNodesElements.addAll(node.currentAndPreviousNodes);
+        }
     }
 
-    public void addInfluencor(Node influencor){
-        if(this.influencorsList == null) influencorsList = new ArrayList<>();
-        influencorsList.add(influencor);
-    }
 }
 
 
 class NodeSetContainer {
     List<Node> noDuplicatesNodes;
 
-    public void fillNodeList(Node nodeToAdd){
-        addNode(nodeToAdd);
-        addInfluencorsToCurrent(
-                getNode(nodeToAdd.currentValue),
-                nodeToAdd.influencorsList
-        );
-        addInfluenceesToCurrent(
-                getNode(nodeToAdd.currentValue),
-                nodeToAdd.influenceesList
-        );
-        addOtherNodesToList(nodeToAdd.influenceesList);
-        addOtherNodesToList(nodeToAdd.influencorsList);
-    }
-
-    private void addOtherNodesToList(List<Node> nodeList){
-        if(nodeList != null){
-            if(noDuplicatesNodes == null) noDuplicatesNodes = new ArrayList<>();
-            nodeList.forEach(this::addNode);
-        }
-    }
-
-    private Node getNode(int currentValue){
-        return noDuplicatesNodes.stream()
-                .filter(node -> node.currentValue == currentValue)
-                .findFirst()
-                .get();
-    }
-
-    private void addNode(Node nodeToAdd){
+    public void fillNodeList(Node node){
         if(noDuplicatesNodes == null) noDuplicatesNodes = new ArrayList<>();
 
-        boolean isNodeAlreadyPresent =
-                noDuplicatesNodes.stream()
-                        .map(node -> node.currentValue)
-                        .anyMatch(currentValue -> currentValue == nodeToAdd.currentValue);
+        Node nodeFromList = addIfNotPresent(node, noDuplicatesNodes);
+        Node influenceeFromList = addIfNotPresent(new Node(node.influenceeValue), noDuplicatesNodes);
 
-        if(!isNodeAlreadyPresent) noDuplicatesNodes.add(nodeToAdd);
+        addIfNotPresent(influenceeFromList, nodeFromList.influenceesList);
+        addIfNotPresent(nodeFromList, influenceeFromList.influencorsList);
     }
 
-    private void addInfluencorsToCurrent(Node node, List<Node> influencorsList){
-        if(node.influencorsList != null){
-            if(!new HashSet<>(node.influencorsList).containsAll(influencorsList)) node.influencorsList.addAll(influencorsList);
-        }
-    }
+    private Node addIfNotPresent(Node node, List<Node> nodeList){
+        if(node.influenceesList == null) node.influenceesList = new ArrayList<>();
+        if(node.influencorsList == null) node.influencorsList = new ArrayList<>();
 
-    private void addInfluenceesToCurrent(Node node, List<Node> influenceesList){
-        if(node.influenceesList != null){
-            if(!new HashSet<>(node.influenceesList).containsAll(influenceesList)) node.influenceesList.addAll(influenceesList);
+        for(int a = 0 ; a < nodeList.size() ; a++){
+            Node nodeFromList = nodeList.get(a);
+            if(nodeFromList.currentValue == node.currentValue){
+                return nodeFromList;
+            }
         }
+        nodeList.add(node);
+        return node;
     }
 }
 
@@ -133,9 +141,9 @@ class Solution {
             int x = in.nextInt(); // a relationship of influence between two people (x influences y)
             int y = in.nextInt();
 
-            relationShipList.add(new Node(x, new Node(y)));
+            relationShipList.add(new Node(x, y));
 
-            System.err.println("n°: " + (a + 1) + " " + x + " -> " + y);
+            System.err.println("n°:" + (a + 1) + "  " + x + " -> " + y);
         }
 
         System.err.println("relationShipList: " + relationShipList);
