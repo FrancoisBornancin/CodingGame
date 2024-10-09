@@ -1,108 +1,145 @@
 import java.util.List;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+
+class FirstNodesRetriever {
+    public List<Node> retrieveFirstNodes(List<Node> nodeList){
+        return null;
+    }
+}
+
+
 class Game {
+    public int play(List<Node> relationShipList){
 
-    public String play(Solution solution){
-        PossibleTelephoneNumberCounter possibleTelephoneNumberCounter = new PossibleTelephoneNumberCounter();
-        NodeListInitializer nodeListInitializer = new NodeListInitializer();
 
-        return String.valueOf(
-                possibleTelephoneNumberCounter
-                        .countDistinctTelephoneNumbers(
-                                nodeListInitializer.initList(
-                                        solution.telephonNumberList
-                                )
-                        )
-        );
+
+        return 0;
     }
 }
 
 
 class Node {
-    int indexForCommonElement;
-    String commonElement;
-    List<Node> distinctElements;
-}
+    List<Node> influencorsList;
+    List<Node> influenceesList;
+    int currentValue;
 
-
-class NodeListInitializer {
-    public List<Node> initList(List<String> telephoneNumberList){
-
-        List<Node> nodeList =
-            fillCommonElementNodeList(telephoneNumberList);
-
-        return nodeList;
+    public Node(int currentValue){
+        this.currentValue = currentValue;
     }
 
-    private void fillWithTruncatedTelephoneList(Node node, List<String> telephoneNumberList){
-            try{
-                List<String> truncatedTelephoneList =
-                        telephoneNumberList.stream()
-                                .filter(telephoneNumber -> telephoneNumber.startsWith(node.commonElement))
-                                .map(telephoneNumber -> telephoneNumber.substring(1))
-                                .filter(telephoneNumber -> !telephoneNumber.equals(""))
-                                .collect(Collectors.toList());
-
-                node.distinctElements
-                        = fillCommonElementNodeList(truncatedTelephoneList);
-            }catch (StringIndexOutOfBoundsException e){
-                node.distinctElements = List.of();
-            }
+    public Node(int currentValue, Node influencee){
+        this.currentValue = currentValue;
+        if(influenceesList == null) influenceesList = new ArrayList<>();
+        influenceesList.add(influencee);
+        influencee.addInfluencor(this);
     }
 
-    private List<Node> fillCommonElementNodeList(List<String> telephoneNumberList){
-        return telephoneNumberList.stream()
-                .map(element -> element.charAt(0))
-                .distinct()
-                .map(element -> {
-                    Node node = new Node();
-                    node.commonElement = element.toString();
+    public Node(Node influencor, int currentValue){
+        this.currentValue = currentValue;
+        if(influencorsList == null) influencorsList = new ArrayList<>();
+        influencorsList.add(influencor);
+        influencor.addInfluencee(this);
+    }
 
-                    fillWithTruncatedTelephoneList(node, telephoneNumberList);
+    public void addInfluencee(Node influencee){
+        if(this.influenceesList == null) influenceesList = new ArrayList<>();
+        influenceesList.add(influencee);
+    }
 
-                    return node;
-                })
-                .toList();
+    public void addInfluencor(Node influencor){
+        if(this.influencorsList == null) influencorsList = new ArrayList<>();
+        influencorsList.add(influencor);
     }
 }
 
 
-class PossibleTelephoneNumberCounter {
-    int count;
-    public int countDistinctTelephoneNumbers(List<Node> nodeList){
-        this.count += nodeList.size();
+class NodeSetContainer {
+    List<Node> noDuplicatesNodes;
 
-        nodeList.forEach(node -> countDistinctTelephoneNumbers(node.distinctElements));
+    public void fillNodeList(Node nodeToAdd){
+        addNode(nodeToAdd);
+        addInfluencorsToCurrent(
+                getNode(nodeToAdd.currentValue),
+                nodeToAdd.influencorsList
+        );
+        addInfluenceesToCurrent(
+                getNode(nodeToAdd.currentValue),
+                nodeToAdd.influenceesList
+        );
+        addOtherNodesToList(nodeToAdd.influenceesList);
+        addOtherNodesToList(nodeToAdd.influencorsList);
+    }
 
-        return count;
+    private void addOtherNodesToList(List<Node> nodeList){
+        if(nodeList != null){
+            if(noDuplicatesNodes == null) noDuplicatesNodes = new ArrayList<>();
+            nodeList.forEach(this::addNode);
+        }
+    }
+
+    private Node getNode(int currentValue){
+        return noDuplicatesNodes.stream()
+                .filter(node -> node.currentValue == currentValue)
+                .findFirst()
+                .get();
+    }
+
+    private void addNode(Node nodeToAdd){
+        if(noDuplicatesNodes == null) noDuplicatesNodes = new ArrayList<>();
+
+        boolean isNodeAlreadyPresent =
+                noDuplicatesNodes.stream()
+                        .map(node -> node.currentValue)
+                        .anyMatch(currentValue -> currentValue == nodeToAdd.currentValue);
+
+        if(!isNodeAlreadyPresent) noDuplicatesNodes.add(nodeToAdd);
+    }
+
+    private void addInfluencorsToCurrent(Node node, List<Node> influencorsList){
+        if(node.influencorsList != null){
+            if(!new HashSet<>(node.influencorsList).containsAll(influencorsList)) node.influencorsList.addAll(influencorsList);
+        }
+    }
+
+    private void addInfluenceesToCurrent(Node node, List<Node> influenceesList){
+        if(node.influenceesList != null){
+            if(!new HashSet<>(node.influenceesList).containsAll(influenceesList)) node.influenceesList.addAll(influenceesList);
+        }
     }
 }
 
 
 class Solution {
-    List<String> telephonNumberList;
-
     public static void main(String args[]) {
-        Solution solution = new Solution();
-        solution.telephonNumberList = new ArrayList<>();
+        Game game = new Game();
 
         Scanner in = new Scanner(System.in);
-        int N = in.nextInt();
-        System.err.println("N: " + N);
-        for (int i = 0; i < N; i++) {
-            String telephone = in.next();
-            solution.telephonNumberList.add(telephone);
+        int n = in.nextInt(); // the number of relationships of influence
+
+        System.err.println("number of relationships: " + n);
+
+        List<Node> relationShipList = new ArrayList<>();
+
+        for (int a = 0; a < n; a++) {
+            int x = in.nextInt(); // a relationship of influence between two people (x influences y)
+            int y = in.nextInt();
+
+            relationShipList.add(new Node(x, new Node(y)));
+
+            System.err.println("n°: " + (a + 1) + " " + x + " -> " + y);
         }
 
-        System.err.println("telephoneList: " + solution.telephonNumberList);
+        System.err.println("relationShipList: " + relationShipList);
 
-        Game game = new Game();
-        System.out.println(game.play(solution));
+        System.out.println(game.play(relationShipList));
     }
 }
