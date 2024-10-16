@@ -10,7 +10,7 @@ public class FileMergerTest {
     @Test
     void doStuff() throws IOException {
         String outputFile = "src/main/java/filemerger/mergedFile.txt";
-        String inputDir = "src/main/java/org/dontpanic/episode1";
+        String inputDir = "src/main/java/org/thefall/episode1";
         new FileMerger()
                 .mergeFiles(inputDir, outputFile);
         Assertions.assertTrue(
