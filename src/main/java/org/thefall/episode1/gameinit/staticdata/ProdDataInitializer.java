@@ -1,7 +1,5 @@
 package org.thefall.episode1.gameinit.staticdata;
 
-import org.thefall.episode1.logging.BaseDataLogger;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;

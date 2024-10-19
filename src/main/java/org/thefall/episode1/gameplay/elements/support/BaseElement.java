@@ -1,6 +1,6 @@
 package org.thefall.episode1.gameplay.elements.support;
 
-public abstract class BaseElement extends PreviousCoordinates{
+public abstract class BaseElement{
     public int cordX;
     public int cordY;
 
